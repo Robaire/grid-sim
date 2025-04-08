@@ -1,6 +1,8 @@
-use super::Producer;
+use super::Agent;
+use super::AgentType;
 use uuid::Uuid;
 
+#[derive(Clone)]
 pub struct PowerPlant {
     id: Uuid,
     name: String,
@@ -19,28 +21,22 @@ impl PowerPlant {
     }
 }
 
-impl PowerPlant {
-    pub fn id(&self) -> Uuid {
+impl Agent for PowerPlant {
+    fn agent_type(&self) -> AgentType {
+        AgentType::PowerPlant
+    }
+
+    fn id(&self) -> Uuid {
         self.id
     }
 
-    pub fn name(&self) -> String {
+    fn name(&self) -> String {
         self.name.clone()
     }
 
-    pub fn set_name(&mut self, name: String) {
+    fn set_name(&mut self, name: String) {
         self.name = name;
     }
 
-    pub fn step(&self) {}
-}
-
-impl Producer for PowerPlant {
-    fn supply(&self) -> f32 {
-        self.supply
-    }
-
-    fn rate(&self) -> f32 {
-        self.rate
-    }
+    fn step(&mut self) {}
 }

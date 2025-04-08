@@ -1,8 +1,6 @@
 mod agent;
 pub use agent::Agent;
-pub use agent::AgentData;
-pub use agent::Consumer;
-pub use agent::Producer;
+pub use agent::AgentType;
 
 mod battery_storage;
 pub use battery_storage::BatteryStorage;

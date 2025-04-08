@@ -1,6 +1,8 @@
-use super::{Consumer, Producer};
+use super::Agent;
+use super::AgentType;
 use uuid::Uuid;
 
+#[derive(Clone)]
 pub struct BatteryStorage {
     id: Uuid,
     name: String,
@@ -19,36 +21,24 @@ impl BatteryStorage {
     }
 }
 
-impl BatteryStorage {
-    pub fn id(&self) -> Uuid {
+impl Agent for BatteryStorage {
+    fn agent_type(&self) -> AgentType {
+        AgentType::BatteryStorage
+    }
+
+    fn id(&self) -> Uuid {
         self.id
     }
 
-    pub fn name(&self) -> String {
+    fn name(&self) -> String {
         self.name.clone()
     }
 
-    pub fn set_name(&mut self, name: String) {
+    fn set_name(&mut self, name: String) {
         self.name = name;
     }
 
-    pub fn step(&self) {
+    fn step(&mut self) {
         // TODO: Implement step
-    }
-}
-
-impl Consumer for BatteryStorage {
-    fn draw(&self) -> f32 {
-        0.0
-    }
-}
-
-impl Producer for BatteryStorage {
-    fn supply(&self) -> f32 {
-        0.0
-    }
-
-    fn rate(&self) -> f32 {
-        0.0
     }
 }

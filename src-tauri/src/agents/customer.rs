@@ -1,6 +1,8 @@
-use super::Consumer;
+use super::Agent;
+use super::AgentType;
 use uuid::Uuid;
 
+#[derive(Clone)]
 pub struct Customer {
     id: Uuid,
     name: String,
@@ -12,31 +14,34 @@ impl Customer {
         Self {
             id: Uuid::new_v4(),
             name: "Customer".to_string(),
-            demand: 100.0,
+            demand: 10.0,
         }
     }
 }
 
-impl Customer {
-    pub fn id(&self) -> Uuid {
+impl Agent for Customer {
+    fn agent_type(&self) -> AgentType {
+        AgentType::Customer
+    }
+
+    fn id(&self) -> Uuid {
         self.id
     }
 
-    pub fn name(&self) -> String {
+    fn name(&self) -> String {
         self.name.clone()
     }
 
-    pub fn set_name(&mut self, name: String) {
+    fn set_name(&mut self, name: String) {
         self.name = name;
     }
 
-    pub fn step(&self) {
+    fn step(&mut self) {
         // TODO: Implement step
-    }
-}
+        self.demand += 1.0;
 
-impl Consumer for Customer {
-    fn draw(&self) -> f32 {
-        self.demand
+        if self.demand > 15.0 {
+            self.demand = 10.0;
+        }
     }
 }

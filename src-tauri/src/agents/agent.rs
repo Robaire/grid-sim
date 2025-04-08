@@ -1,36 +1,61 @@
-use super::BatteryStorage;
-use super::Customer;
-use super::PowerPlant;
-use serde::{Deserialize, Serialize};
+use std::fmt;
 use uuid::Uuid;
 
+pub enum AgentType {
+    Customer,
+    PowerPlant,
+    BatteryStorage,
+}
+
+impl fmt::Display for AgentType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AgentType::Customer => write!(f, "Customer"),
+            AgentType::PowerPlant => write!(f, "Power Plant"),
+            AgentType::BatteryStorage => write!(f, "Battery Storage"),
+        }
+    }
+}
+
+pub trait Agent {
+    fn agent_type(&self) -> AgentType;
+    fn id(&self) -> Uuid;
+    fn name(&self) -> String;
+    fn set_name(&mut self, name: String);
+    fn step(&mut self);
+}
+
+impl Agent for Box<dyn Agent + Send + Sync> {
+    fn agent_type(&self) -> AgentType {
+        self.as_ref().agent_type()
+    }
+
+    fn id(&self) -> Uuid {
+        self.as_ref().id()
+    }
+
+    fn name(&self) -> String {
+        self.as_ref().name()
+    }
+
+    fn set_name(&mut self, name: String) {
+        self.as_mut().set_name(name);
+    }
+
+    fn step(&mut self) {
+        self.as_mut().step();
+    }
+}
+
+/*
+#[derive(Clone)]
 pub enum Agent {
     Customer(Customer),
     PowerPlant(PowerPlant),
     BatteryStorage(BatteryStorage),
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct AgentData {
-    pub id: String,
-    pub name: String,
-    pub agent_type: String,
-}
-
 impl Agent {
-    pub fn as_data(&self) -> AgentData {
-        AgentData {
-            id: self
-                .id()
-                .as_bytes()
-                .iter()
-                .map(|b| format!("{:02X}", b))
-                .collect::<String>(),
-            name: self.name(),
-            agent_type: self.agent_type(),
-        }
-    }
-
     pub fn agent_type(&self) -> String {
         match self {
             Agent::Customer(_) => "Customer".to_string(),
@@ -63,7 +88,13 @@ impl Agent {
         }
     }
 
-    pub fn step(&self) {
+    pub fn step(
+        &mut self,
+        prev_in: Vec<EdgeReference<TransmissionLine>>,
+        new_in: Vec<EdgeReference<TransmissionLine>>,
+        prev_out: Vec<EdgeReference<TransmissionLine>>,
+        new_out: Vec<EdgeReference<TransmissionLine>>,
+    ) {
         match self {
             Agent::Customer(agent) => agent.step(),
             Agent::PowerPlant(agent) => agent.step(),
@@ -71,12 +102,4 @@ impl Agent {
         }
     }
 }
-
-pub trait Consumer {
-    fn draw(&self) -> f32;
-}
-
-pub trait Producer {
-    fn supply(&self) -> f32;
-    fn rate(&self) -> f32;
-}
+*/
